@@ -77,6 +77,8 @@ def edit_axis_tables(num_rows, num_cols):
     st.session_state['col_names_values'] = list(edited_col_names.iloc[0])
     st.session_state['col_names_values'] = ensure_unique_values(st.session_state['col_names_values'])
 
+    return st.session_state['col_names_values'], st.session_state['row_names_values']
+
 
 def init_lookup_table():
     if 'table_data' not in st.session_state or not isinstance(st.session_state['table_data'], pd.DataFrame):
@@ -108,16 +110,6 @@ def render_lookup_editor():
     )
     st.session_state['table_data'] = table_data
     return table_data
-
-
-def render_heatmap(table_data):
-    st.subheader("Visualisation")
-    if not table_data.empty:
-        fig = px.imshow(table_data.values, text_auto=True, aspect="auto")
-        st.plotly_chart(fig)
-    else:
-        st.write("Aucune donnée à afficher")
-
 
 def render_signals():
     if 'mat_data' not in st.session_state:
@@ -169,10 +161,9 @@ def main():
     load_sidebar()
     num_rows, num_cols = get_table_size_inputs()
     ensure_axis_values_length(num_rows, num_cols)
-    edit_axis_tables(num_rows, num_cols)
+    x_axis_data, y_axis_data = edit_axis_tables(num_rows, num_cols)
     init_lookup_table()
     table_data = render_lookup_editor()
-    render_heatmap(table_data)
     render_signals()
     render_footer(table_data)
 
