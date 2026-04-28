@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from scipy.io import loadmat
 from data_input_processing import *
+from calc_processing import calculate_lookup_results
 
 st.set_page_config(layout="wide")
 
@@ -150,9 +151,16 @@ def render_footer(table_data):
     if st.button("Lancer les calculs"):
         if 'uploaded_file' in st.session_state:
             st.write("Fichier :", st.session_state['uploaded_file'].name)
-        st.write("Données de la table :", table_data.to_dict())
-        st.write("Valeurs des noms de lignes :", st.session_state['row_names_values'])
-        st.write("Valeurs des noms de colonnes :", st.session_state['col_names_values'])
+
+        results = calculate_lookup_results(
+            mat_data=st.session_state.get('mat_data'),
+            lookup_table=table_data,
+            row_values=st.session_state['row_names_values'],
+            col_values=st.session_state['col_names_values']
+        )
+
+        st.write("Résultats de calcul :")
+        st.json(results)
         st.success("Calculs lancés !")
 
 
